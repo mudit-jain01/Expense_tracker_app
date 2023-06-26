@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Login from './components/Login';
 import './App.css';
 
 const App = () => {
@@ -6,6 +7,10 @@ const App = () => {
   const [newExpense, setNewExpense] = useState(''); //string
   const [newCategory, setNewCategory] = useState(''); //string
   const [editingExpense, setEditingExpense] = useState(null); //number
+  const [loggedIn, setLoggedIn] = useState(false);
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
 
   useEffect(() => { //runs only once when the component is mounted
     const storedExpenses = localStorage.getItem('expenses');  //get the expenses from local storage
@@ -53,38 +58,44 @@ const App = () => {
 
   return (
     <div className="container">
-      <h1>Expense Tracker</h1>
-      <div className="input-container">
-        <input  //input for the expense and category
-          type="text"
-          value={newExpense}
-          onChange={(e) => setNewExpense(e.target.value)}
-          placeholder="Enter an expense"
-        />
-        <input  //input for the expense and category
-          type="text"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-          placeholder="Enter a category"
-        />
-        <button onClick={editingExpense !== null ? handleUpdateExpense : handleAddExpense}> //if editing expense is not null, show update expense, else show add expense
-          {editingExpense !== null ? 'Update Expense' : 'Add Expense'}  //if editing expense is not null, show update expense, else show add expense
-        </button>
-      </div>
-      <ul>  //list of expenses
-        {expenses.map((expense, index) => ( //map through the expenses array
-          <li key={index}>  //list item for each expense
-            <span className="expense">{expense.expense}</span>  //expense and category
-            <span className="category">{expense.category}</span>  //expense and category
-            <button className="edit" onClick={() => handleEditExpense(index)}>  //edit and delete buttons
-              Edit
+      {loggedIn ? (
+        // Main App component
+        <>
+          <h1>Welcome to the Expense Tracker App</h1>
+          <div className="input-container">
+            <input //input for the expense and category
+
+              type="text"
+              value={newExpense}
+              onChange={(e) => setNewExpense(e.target.value)}
+              placeholder="Enter an expense" />
+            <input //input for the expense and category
+
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Enter a category" />
+            <button onClick={editingExpense !== null ? handleUpdateExpense : handleAddExpense}>
+              {editingExpense !== null ? 'Update Expense' : 'Add Expense'}
             </button>
-            <button className="delete" onClick={() => handleDeleteExpense(index)}>
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+          </div><ul>
+            {expenses.map((expense, index) => ( //map through the expenses array
+              <li key={index}>
+                <span className="expense">{expense.expense}</span>
+                <span className="category">{expense.category}</span>
+                <button className="edit" onClick={() => handleEditExpense(index)}>
+                  Edit
+                </button>
+                <button className="delete" onClick={() => handleDeleteExpense(index)}>
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul></>
+      ) : (
+        // Login page
+        <Login onLogin={handleLogin} />
+      )}
     </div>
   );
 };
